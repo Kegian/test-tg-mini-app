@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>HelpDesk Application</title>
+		<style>
+body {
+	--bg-color: var(--tg-theme-bg-color);
+	font: 12px/18px "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Verdana, sans-serif;
+	background-color: var(--bg-color);
+	color: var(--tg-theme-text-color);
+	margin: 48px 24px;
+	padding: 0;
+	color-scheme: var(--tg-color-scheme);
+}
+
+				a {
+					color: var(--tg-theme-link-color);
+				}
+				#viewport {
+					position: fixed;
+					left: 0;
+					right: 0;
+					top: 0;
+					height: var(--tg-viewport-stable-height, 100vh);
+					pointer-events: none;
+					transition: all .2s ease;
+				}
+				#viewport:after {
+					content: '';
+					display: block;
+					position: absolute;
+					left: 0;
+					right: 0;
+					top: 0;
+					bottom: 0;
+					border-width: 4px;
+					border-style: solid;
+					border-image: linear-gradient(45deg, rgba(64, 224, 208, .5), rgba(173, 255, 47, .5)) 1;
+				}
+
+				#viewport-params-size,
+				#viewport-params-expand {
+					content: attr(text);
+					position: absolute;
+					display: inline-block;
+					background: var(--tg-theme-link-color, rgb(64, 224, 208));
+					right: 4px;
+					left: auto;
+					font-size: 8px;
+					padding: 4px;
+					vertical-align: top;
+				}
+				#viewport-params-size {
+					top: 4px;
+				}
+				#viewport-params-expand {
+					top: 30px;
+				}
+				.panel {
+					position: fixed;
+					top: 0;
+					left: 0;
+					width: 100%;
+					background-color: #333;
+					color: white;
+					padding: 10px;
+					box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					z-index: 1000;
+				}
+
+				.panel-content {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					width: 100%;
+					max-width: 1200px;
+					padding: 0 20px; /* Отступы по краям */
+					box-sizing: border-box;
+				}
+
+				.title {
+					flex: 1;
+					text-align: center;
+					font-size: 24px;
+				}
+
+				.notification-icon {
+					flex-shrink: 0;
+					margin-left: auto;
+				}
+
+				.notification-icon svg {
+					fill: white;
+					cursor: pointer;
+				}
+				.card-list {
+					width: 100%;
+					padding: 20px;
+					box-sizing: border-box;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+				}
+
+				.card {
+					background-color: #fff;
+					border: 1px solid #ccc;
+					border-radius: 10px;
+					margin-bottom: 20px;
+					box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+					overflow: hidden;
+					width: 100%;
+					max-width: 600px;
+				}
+
+				.card-header {
+					display: flex;
+					justify-content: space-between;
+					padding: 15px;
+					border-bottom: 1px solid #eee;
+					background-color: #f5f5f5;
+				}
+
+				.username {
+					font-weight: bold;
+				}
+
+				.status {
+					padding: 2px 8px;
+					border-radius: 5px;
+					font-size: 0.9em;
+					color: #fff;
+				}
+
+				.status.pending {
+					background-color: #f0ad4e;
+				}
+
+				.status.reviewed {
+					background-color: #5cb85c;
+				}
+
+				.status.not-reviewed {
+					background-color: #d9534f;
+				}
+
+				.card-body {
+					padding: 15px;
+				}
+
+				.card-body p {
+					margin: 0;
+					color: #555;
+				}
+				.card-footer {
+					padding: 10px 15px;
+					background-color: #f9f9f9;
+					border-top: 1px solid #eee;
+				}
+
+				.message-count {
+					color: #777;
+				}
+		</style>
+	</head>
+
+	<body>
+		<div class="panel">
+			<div class="panel-content">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+					<path fill-rule="evenodd" d="M3.5 12a.5.5 0 0 1 0-1h9a.5.5 0 0 1 0 1h-9zm0-4a.5.5 0 0 1 0-1h9a.5.5 0 0 1 0 1h-9zm0-4a.5.5 0 0 1 0-1h9a.5.5 0 0 1 0 1h-9z"/>
+				</svg>
+				<div class="title">HelpDesk</div>
+				<div class="notification-icon">
+					<svg fill="#000000" height="24" width="24" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+																																							 viewBox="0 0 611.999 611.999" xml:space="preserve">
+						<g>
+						<g>
+						<g>
+						<path d="M570.107,500.254c-65.037-29.371-67.511-155.441-67.559-158.622v-84.578c0-81.402-49.742-151.399-120.427-181.203
+										 C381.969,34,347.883,0,306.001,0c-41.883,0-75.968,34.002-76.121,75.849c-70.682,29.804-120.425,99.801-120.425,181.203v84.578
+										 c-0.046,3.181-2.522,129.251-67.561,158.622c-7.409,3.347-11.481,11.412-9.768,19.36c1.711,7.949,8.74,13.626,16.871,13.626
+										 h164.88c3.38,18.594,12.172,35.892,25.619,49.903c17.86,18.608,41.479,28.856,66.502,28.856
+										 c25.025,0,48.644-10.248,66.502-28.856c13.449-14.012,22.241-31.311,25.619-49.903h164.88c8.131,0,15.159-5.676,16.872-13.626
+										 C581.586,511.664,577.516,503.6,570.107,500.254z M484.434,439.859c6.837,20.728,16.518,41.544,30.246,58.866H97.32
+										 c13.726-17.32,23.407-38.135,30.244-58.866H484.434z M306.001,34.515c18.945,0,34.963,12.73,39.975,30.082
+										 c-12.912-2.678-26.282-4.09-39.975-4.09s-27.063,1.411-39.975,4.09C271.039,47.246,287.057,34.515,306.001,34.515z
+										 M143.97,341.736v-84.685c0-89.343,72.686-162.029,162.031-162.029s162.031,72.686,162.031,162.029v84.826
+										 c0.023,2.596,0.427,29.879,7.303,63.465H136.663C143.543,371.724,143.949,344.393,143.97,341.736z M306.001,577.485
+										 c-26.341,0-49.33-18.992-56.709-44.246h113.416C355.329,558.493,332.344,577.485,306.001,577.485z"/>
+						<path d="M306.001,119.235c-74.25,0-134.657,60.405-134.657,134.654c0,9.531,7.727,17.258,17.258,17.258
+										 c9.531,0,17.258-7.727,17.258-17.258c0-55.217,44.923-100.139,100.142-100.139c9.531,0,17.258-7.727,17.258-17.258
+										 C323.259,126.96,315.532,119.235,306.001,119.235z"/>
+						</g>
+						</g>
+						</g>
+					</svg>
+				</div>
+			</div>
+		</div>
+		<main>
+			<div class="card-list">
+				<div class="card" data-id="1">
+					<div class="card-header">
+						<span class="username">@user1</span>
+						<span class="status pending">На рассмотрении</span>
+					</div>
+					<div class="card-body">
+						<p>Здесь находится краткий текст заявки обращения пользователя...</p>
+					</div>
+					<div class="card-footer">
+						<span class="message-count">Сообщений: 3</span>
+					</div>
+				</div>
+				<div class="card" data-id="2">
+					<div class="card-header">
+						<span class="username">@user2</span>
+						<span class="status reviewed">Рассмотрено</span>
+					</div>
+					<div class="card-body">
+						<p>Здесь находится краткий текст заявки обращения пользователя...</p>
+					</div>
+					<div class="card-footer">
+						<span class="message-count">Сообщений: 5</span>
+					</div>
+				</div>
+				<div class="card" data-id="3">
+					<div class="card-header">
+						<span class="username">@user3</span>
+						<span class="status not-reviewed">Не рассмотрено</span>
+					</div>
+					<div class="card-body">
+						<p>Здесь находится краткий текст заявки обращения пользователя...</p>
+					</div>
+					<div class="card-footer">
+						<span class="message-count">Сообщений: 0</span>
+					</div>
+				</div>
+
+				<div class="card" data-id="4">
+					<div class="card-header">
+						<span class="username">@user4</span>
+						<span class="status not-reviewed">Не рассмотрено</span>
+					</div>
+					<div class="card-body">
+						<p>Здесь находится краткий текст заявки обращения пользователя...</p>
+					</div>
+					<div class="card-footer">
+						<span class="message-count">Сообщений: 0</span>
+					</div>
+				</div>
+
+				<div class="card" data-id="5">
+					<div class="card-header">
+						<span class="username">@user5</span>
+						<span class="status not-reviewed">Не рассмотрено</span>
+					</div>
+					<div class="card-body">
+						<p>Здесь находится краткий текст заявки обращения пользователя...</p>
+					</div>
+					<div class="card-footer">
+						<span class="message-count">Сообщений: 0</span>
+					</div>
+				</div>
+			</div>
+		<script src="https://telegram.org/js/telegram-web-app.js"></script>
+		<script>
+			// Init TWA
+			Telegram.WebApp.ready();
+
+			// Event occurs whenever theme settings are changed in the user's Telegram app (including switching to night mode).
+			Telegram.WebApp.onEvent('themeChanged', function() {
+				document.documentElement.className = Telegram.WebApp.colorScheme;
+			});
+
+			// Show main button
+			Telegram.WebApp.MainButton.setParams({
+				text: 'Main Button'
+			});
+			Telegram.WebApp.MainButton.onClick(function () {
+				Telegram.WebApp.showAlert('Main Button was clicked')
+			});	
+			Telegram.WebApp.MainButton.show();
+
+			// Function to call showPopup API
+			function showPopup() {
+				Telegram.WebApp.showPopup({
+					title: 'Title',
+					message: 'Some message',
+					buttons: [
+						{id: 'link', type: 'default', text: 'Open ton.org'},
+						{type: 'cancel'},
+					]
+				}, function(btn) {
+					if (btn === 'link') {
+						Telegram.WebApp.openLink('https://ton.org/');
+					}
+				});
+			};
+
+			// Function to toggle main TWA button
+			function toggleMainButton() {
+				if (Telegram.WebApp.MainButton.isVisible) {
+					Telegram.WebApp.MainButton.hide();
+				} else {
+					Telegram.WebApp.MainButton.show();
+				}
+			};
+
+			function setViewportData() {
+				var sizeEl = document.getElementById('viewport-params-size');
+				sizeEl.innerText = 'width: ' + window.innerWidth + ' x ' + 
+					'height: ' + Telegram.WebApp.viewportStableHeight;
+
+				var expandEl = document.querySelector('#viewport-params-expand');
+				expandEl.innerText = 'Is Expanded: ' + (Telegram.WebApp.isExpanded ? 'true' : 'false');
+			}
+
+			Telegram.WebApp.setHeaderColor('secondary_bg_color');
+
+			setViewportData();
+			Telegram.WebApp.onEvent('viewportChanged', setViewportData);
+
+			Telegram.WebApp.onEvent('themeChanged', function() {
+				document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
+			});
+
+			document.addEventListener('DOMContentLoaded', function() {
+				const cards = document.querySelectorAll('.card');
+
+				cards.forEach(card => {
+					card.addEventListener('click', function() {
+						const cardId = this.getAttribute('data-id');
+						console.log(`Карточка с ID ${cardId} была нажата.`);
+						Telegram.WebApp.showAlert('Здесь открывается страница с заявкой');
+					});
+				});
+			});
+
+		</script>
+
+		<!-- Eruda is console for mobile browsers -->
+		<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+		<script>eruda.init();</script>
+	</body>
+</html>
