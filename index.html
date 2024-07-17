@@ -7,18 +7,13 @@
 		<title>HelpDesk Application</title>
 		<style>
 body {
-	--bg-color: var(--tg-theme-bg-color);
 	font: 12px/18px "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Verdana, sans-serif;
 	background-color: var(--bg-color);
 	color: var(--tg-theme-text-color);
 	margin: 48px 24px;
 	padding: 0;
-	color-scheme: var(--tg-color-scheme);
 }
 
-				a {
-					color: var(--tg-theme-link-color);
-				}
 				#viewport {
 					position: fixed;
 					left: 0;
@@ -326,10 +321,6 @@ body {
 
 			setViewportData();
 			Telegram.WebApp.onEvent('viewportChanged', setViewportData);
-
-			Telegram.WebApp.onEvent('themeChanged', function() {
-				document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
-			});
 
 			document.addEventListener('DOMContentLoaded', function() {
 				const cards = document.querySelectorAll('.card');
